@@ -15,7 +15,7 @@ export DEBIAN_FRONTEND=noninteractive
 apt update
 apt install -y curl wget cron python-minimal libpython-stdlib
 apt install -y iptables
-apt install -y openvpn netcat httpie php neofetch vnstat
+apt install -y openvpn
 apt install -y screen squid stunnel4 dropbear gnutls-bin python
 apt install -y dos2unix nano unzip jq virt-what net-tools default-mysql-client
 apt install -y mlocate dh-make libaudit-dev build-essential fail2ban
@@ -58,7 +58,7 @@ echo "deb http://ftp.debian.org/debian/ jessie main contrib non-free
       --with-pidfile=/var/run/squid.pid
     make -j$(nproc)
     make install
-    wget --no-check-certificate -O /etc/init.d/squid http://firenetvpn.net/files/slowdns/squid.sh
+    wget --no-check-certificate -O /etc/init.d/squid https://raw.githubusercontent.com/manikbd09/files/main/squid.sh
     chmod +x /etc/init.d/squid
     update-rc.d squid defaults
     chown -cR proxy /var/log/squid
@@ -74,7 +74,7 @@ acl HEAD method HEAD
 acl POST method POST
 acl GET method GET
 acl CONNECT method CONNECT
-http_access allow Scbuild
+http_access allow Scnuild
 http_reply_access allow all
 http_access deny all
 icp_access allow all
@@ -83,19 +83,13 @@ visible_hostname Scbuild-Proxy
 error_directory /usr/share/squid/errors/English' >> squid.conf
     cd /usr/share/squid/errors/English
     rm ERR_INVALID_URL
-    echo '<!--ScbuildDev--><!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>SECURE PROXY</title><meta name="viewport" content="width=device-width, initial-scale=1"><meta http-equiv="X-UA-Compatible" content="IE=edge"/><link rel="stylesheet" href="https://bootswatch.com/4/slate/bootstrap.min.css" media="screen"><link href="https://fonts.googleapis.com/css?family=Press+Start+2P" rel="stylesheet"><style>body{font-family: "Press Start 2P", cursive;}.fn-color{color: #ffff; background-image: -webkit-linear-gradient(92deg, #f35626, #feab3a); -webkit-background-clip: text; -webkit-text-fill-color: transparent; -webkit-animation: hue 5s infinite linear;}@-webkit-keyframes hue{from{-webkit-filter: hue-rotate(0deg);}to{-webkit-filter: hue-rotate(-360deg);}}</style></head><body><div class="container" style="padding-top: 50px"><div class="jumbotron"><h1 class="display-3 text-center fn-color">SECURE PROXY</h1><h4 class="text-center text-danger">SERVER</h4><p class="text-center">😍 %w 😍</p></div></div></body></html>' >> ERR_INVALID_URL
+    echo '<!--Alamin--><!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>SECURE PROXY</title><meta name="viewport" content="width=device-width, initial-scale=1"><meta http-equiv="X-UA-Compatible" content="IE=edge"/><link rel="stylesheet" href="https://bootswatch.com/4/slate/bootstrap.min.css" media="screen"><link href="https://fonts.googleapis.com/css?family=Press+Start+2P" rel="stylesheet"><style>body{font-family: "Press Start 2P", cursive;}.fn-color{color: #ffff; background-image: -webkit-linear-gradient(92deg, #f35626, #feab3a); -webkit-background-clip: text; -webkit-text-fill-color: transparent; -webkit-animation: hue 5s infinite linear;}@-webkit-keyframes hue{from{-webkit-filter: hue-rotate(0deg);}to{-webkit-filter: hue-rotate(-360deg);}}</style></head><body><div class="container" style="padding-top: 50px"><div class="jumbotron"><h1 class="display-3 text-center fn-color">SECURE PROXY</h1><h4 class="text-center text-danger">SERVER</h4><p class="text-center">😍 %w 😍</p></div></div></body></html>' >> ERR_INVALID_URL
     chmod 755 *
     /etc/init.d/squid start
 cd /etc || exit
 wget 'https://teamkidlat.com/public/raw/JWrIyIh1In' -O /etc/socks.py
 dos2unix /etc/socks.py
 chmod +x /etc/socks.py
-wget 'https://raw.githubusercontent.com/kimdev541/panel/panel_files/monitor' -O /etc/.monitor
-wget 'https://raw.githubusercontent.com/kimdev541/panel/panel_files/ws' -O /etc/.ws
-wget 'https://raw.githubusercontent.com/kimdev541/panel/panel_files/counter' -O /etc/.counter
-chmod +x /etc/.monitor
-chmod +x /etc/.ws
-chmod +x /etc/.counter
 rm /etc/apt/sources.list
 sudo cp /etc/apt/sources.list_backup /etc/apt/sources.list
 } &>/dev/null
@@ -119,90 +113,95 @@ echo 'DNS=1.1.1.1
 DNSStubListener=no' >> /etc/systemd/resolved.conf
 sudo ln -sf /run/systemd/resolve/resolv.conf /etc/resolv.conf
 
-echo '#Openvpn Configuration by Scbuild Developer :)
+echo '# Openvpn Configuration by SCBUILD Alamin :)
 dev tun
 port PORT_UDP
 proto udp
-server 10.10.0.0 255.255.0.0
-ca /etc/openvpn/easy-rsa/keys/ca.crt
-cert /etc/openvpn/easy-rsa/keys/server.crt
-key /etc/openvpn/easy-rsa/keys/server.key
-dh /etc/openvpn/easy-rsa/keys/dh.pem
-ncp-disable
+topology subnet
+server 10.30.0.0 255.255.252.0
+ca /etc/openvpn/easy-rsa/keys/ca.crt 
+cert /etc/openvpn/easy-rsa/keys/server.crt 
+key /etc/openvpn/easy-rsa/keys/server.key 
+dh none
 tls-server
 tls-version-min 1.2
 tls-cipher TLS-ECDHE-RSA-WITH-AES-128-GCM-SHA256
 cipher none
+ncp-disable
 auth none
+sndbuf 0
+rcvbuf 0
+keepalive 10 120
 persist-key
 persist-tun
 ping-timer-rem
-compress lz4-v2
-keepalive 10 120
-reneg-sec 86400
+reneg-sec 0
 user nobody
 group nogroup
 client-to-client
-duplicate-cn
 username-as-common-name
 verify-client-cert none
 script-security 3
-auth-user-pass-verify "/etc/openvpn/login/auth_vpn" via-env #
-push "redirect-gateway def1 bypass-dhcp"
-push "dhcp-option DNS 8.8.8.8"
-push "dhcp-option DNS 8.8.4.4"
-push "compress lz4-v2"
-push "persist-key"
-push "persist-tun"
+duplicate-cn
 client-connect /etc/openvpn/login/connect.sh
 client-disconnect /etc/openvpn/login/disconnect.sh
+ifconfig-pool-persist /etc/openvpn/server/ip_udp.txt
+auth-user-pass-verify "/etc/openvpn/login/auth_vpn" via-env # 
+push "persist-key"
+push "persist-tun"
+push "dhcp-option DNS 8.8.8.8"
+push "redirect-gateway def1 bypass-dhcp"
+push "sndbuf 0"
+push "rcvbuf 0"
 log /etc/openvpn/server/udpserver.log
 status /etc/openvpn/server/udpclient.log
-status-version 2
-verb 3' > /etc/openvpn/server2.conf
+verb 3' > /etc/openvpn/server.conf
 
 sed -i "s|PORT_UDP|$PORT_UDP|g" /etc/openvpn/server.conf
 
-echo '#Openvpn Configuration by Scbuild Developer :)
+echo '# Openvpn Configuration by SCBUILD Alamin :)
 dev tun
 port PORT_TCP
 proto tcp
-server 10.20.0.0 255.255.0.0
-ca /etc/openvpn/easy-rsa/keys/ca.crt
-cert /etc/openvpn/easy-rsa/keys/server.crt
-key /etc/openvpn/easy-rsa/keys/server.key
-dh /etc/openvpn/easy-rsa/keys/dh.pem
-ncp-disable
+topology subnet
+server 10.20.0.0 255.255.252.0
+ca /etc/openvpn/easy-rsa/keys/ca.crt 
+cert /etc/openvpn/easy-rsa/keys/server.crt 
+key /etc/openvpn/easy-rsa/keys/server.key 
+dh none
 tls-server
 tls-version-min 1.2
 tls-cipher TLS-ECDHE-RSA-WITH-AES-128-GCM-SHA256
 cipher none
+ncp-disable
 auth none
+sndbuf 0
+rcvbuf 0
+keepalive 10 120
 persist-key
 persist-tun
 ping-timer-rem
-compress lz4-v2
-keepalive 10 120
-reneg-sec 86400
+reneg-sec 0
 user nobody
 group nogroup
 client-to-client
-duplicate-cn
 username-as-common-name
 verify-client-cert none
 script-security 3
-auth-user-pass-verify "/etc/openvpn/login/auth_vpn" via-env #
-push "redirect-gateway def1 bypass-dhcp"
-push "dhcp-option DNS 8.8.8.8"
-push "dhcp-option DNS 8.8.4.4"
-push "compress lz4-v2"
-push "persist-key"
-push "persist-tun"
+duplicate-cn
+socket-flags TCP_NODELAY
 client-connect /etc/openvpn/login/connect.sh
 client-disconnect /etc/openvpn/login/disconnect.sh
+ifconfig-pool-persist /etc/openvpn/server/ip_tcp.txt
+auth-user-pass-verify "/etc/openvpn/login/auth_vpn" via-env # 
+push "persist-key"
+push "persist-tun"
+push "dhcp-option DNS 8.8.8.8"
+push "redirect-gateway def1 bypass-dhcp"
+push "sndbuf 0"
+push "rcvbuf 0"
 log /etc/openvpn/server/tcpserver.log
 status /etc/openvpn/server/tcpclient.log
-status-version 2
 verb 3' > /etc/openvpn/server2.conf
 
 sed -i "s|PORT_TCP|$PORT_TCP|g" /etc/openvpn/server2.conf
@@ -236,7 +235,6 @@ cat <<'LENZ05' >/etc/openvpn/login/connect.sh
 server_ip=SERVER_IP
 datenow=`date +"%Y-%m-%d %T"`
 mysql -u $USER -p$PASS -D $DB -h $HOST -e "UPDATE users SET is_connected='1', device_connected='1', active_address='$server_ip', active_date='$datenow' WHERE user_name='$common_name' "
-#mysql -u $USER -p$PASS -D $DB -h $HOST -e "UPDATE server_list SET online=online+1 WHERE server_ip='$server_ip' "
 LENZ05
 
 sed -i "s|SERVER_IP|$server_ip|g" /etc/openvpn/login/connect.sh
@@ -245,12 +243,8 @@ sed -i "s|SERVER_IP|$server_ip|g" /etc/openvpn/login/connect.sh
 cat <<'LENZ06' >/etc/openvpn/login/disconnect.sh
 #!/bin/bash
 . /etc/openvpn/login/config.sh
-server_ip=SERVER_IP
 mysql -u $USER -p$PASS -D $DB -h $HOST -e "UPDATE users SET is_connected='0', active_address='', active_date='' WHERE user_name='$common_name' "
-#mysql -u $USER -p$PASS -D $DB -h $HOST -e "UPDATE server_list SET online=online-1 WHERE server_ip='$server_ip' "
 LENZ06
-
-sed -i "s|SERVER_IP|$server_ip|g" /etc/openvpn/login/disconnect.sh
 
 cat << EOF > /etc/openvpn/easy-rsa/keys/ca.crt
 -----BEGIN CERTIFICATE-----
@@ -355,14 +349,11 @@ JQbf7qSE3mg2
 -----END PRIVATE KEY-----
 EOF
 
-cat << EOF > /etc/openvpn/easy-rsa/keys/dh.pem
+cat << EOF > /etc/openvpn/easy-rsa/keys/dh2048.pem
 -----BEGIN DH PARAMETERS-----
-MIIBCAKCAQEA8MUwUyMPJw5khx6y9yI9DoZpq0bFaLP0aLPTGI7AeDBnaukqa4vW
-TXUW5yfvgMkCuWfq2KPc/z1Ck92hhE37EOT3tovVrbWUfNVtDWl1z69JYduznvW1
-iDddNmeTiWLiTPhm63HbeZD61pBqMPQRz4DokPwkSok/BlzzRfAOH1NGFmmBrs/B
-afVpyVA2mO4SxiWznAj/KZLtL6IyT/GPfZLR4umQ1Lz82zO80HPfHQ7UtDSdbjyM
-sndH7WSvxv6+D/cCO1/bGArnpExdTcR4WmaF0ebPDJ9cilXmz+hcGAmcnBj5qP5U
-dbCSvBgUDBm+DjlBZzoVSeHtIe/jPj38MwIBAg==
+MIGHAoGBAKqeBUWMYdj6+Z6kPVyQjm5Pc/nhSeczplV0AX/zJ5lL9TXRGNg+q/nK
+tQyaBpmBWAHxHP8j7NmRQaN6rpBkqHOtXJB9FT35xDvnAAaMxYW5RetBRUW7UnJ3
+s1qQZ6kAUwIgDHzS9ykP9IzKPTbCrMIA/8kHfJ1qMfSDY8slKSVjAgEC
 -----END DH PARAMETERS-----
 EOF
 
@@ -381,21 +372,58 @@ chmod 755 /etc/openvpn/login/auth_vpn
 }
 
 
-install_firewall_kvm () {
-clear
-echo "Installing iptables."
-echo "net.ipv4.ip_forward=1" >> /etc/sysctl.conf
-sysctl -p
-{
-iptables -t nat -A POSTROUTING -s 10.20.0.0/22 -o "$server_interface" -j MASQUERADE
-iptables -t nat -A POSTROUTING -s 10.20.0.0/22 -o "$server_interface" -j SNAT --to-source "$server_ip"
-iptables -t nat -A POSTROUTING -s 10.30.0.0/22 -o "$server_interface" -j MASQUERADE
-iptables -t nat -A POSTROUTING -s 10.30.0.0/22 -o "$server_interface" -j SNAT --to-source "$server_ip"
+install_firewall_kvm(){
+  {
+echo -e "\033[01;31m Configure Sysctl \033[0m"
+echo 'fs.file-max = 51200
+net.core.rmem_max = 67108864
+net.core.wmem_max = 67108864
+net.core.netdev_max_backlog = 250000
+net.core.somaxconn = 4096
+net.ipv4.tcp_tw_reuse = 1
+net.ipv4.tcp_fin_timeout = 30
+net.ipv4.tcp_keepalive_time = 1200
+net.ipv4.ip_local_port_range = 10000 65000
+net.ipv4.tcp_max_syn_backlog = 8192
+net.ipv4.tcp_max_tw_buckets = 5000
+net.ipv4.tcp_mem = 25600 51200 102400
+net.ipv4.tcp_rmem = 4096 87380 67108864
+net.ipv4.tcp_wmem = 4096 65536 67108864
+net.ipv4.tcp_mtu_probing = 1
+net.core.default_qdisc=fq
+net.ipv4.tcp_congestion_control=bbr
+net.ipv4.ip_forward=1
+net.ipv4.icmp_echo_ignore_all = 1' >> /etc/sysctl.conf
+echo '* soft nofile 512000
+* hard nofile 512000' >> /etc/security/limits.conf
+ulimit -n 512000
+
+iptables -t nat -A POSTROUTING -s 10.10.0.0/22 -o enp1s0 -j MASQUERADE
+iptables -t nat -A POSTROUTING -s 10.10.0.0/22 -o enp1s0 -j SNAT --to-source "$(curl ipecho.net/plain)"
+iptables -t nat -A POSTROUTING -s 10.10.0.0/22 -o eth0 -j MASQUERADE
+iptables -t nat -A POSTROUTING -s 10.10.0.0/22 -o eth0 -j SNAT --to-source "$(curl ipecho.net/plain)"
+iptables -t nat -A POSTROUTING -s 10.10.0.0/22 -o ens3 -j MASQUERADE
+iptables -t nat -A POSTROUTING -s 10.10.0.0/22 -o ens3 -j SNAT --to-source "$(curl ipecho.net/plain)"
+
+iptables -t nat -A POSTROUTING -s 10.20.0.0/22 -o enp1s0 -j MASQUERADE
+iptables -t nat -A POSTROUTING -s 10.20.0.0/22 -o enp1s0 -j SNAT --to-source "$(curl ipecho.net/plain)"
+iptables -t nat -A POSTROUTING -s 10.20.0.0/22 -o eth0 -j MASQUERADE
+iptables -t nat -A POSTROUTING -s 10.20.0.0/22 -o eth0 -j SNAT --to-source "$(curl ipecho.net/plain)"
+iptables -t nat -A POSTROUTING -s 10.20.0.0/22 -o ens3 -j MASQUERADE
+iptables -t nat -A POSTROUTING -s 10.20.0.0/22 -o ens3 -j SNAT --to-source "$(curl ipecho.net/plain)"
+
+iptables -t nat -A POSTROUTING -s 10.30.0.0/22 -o eth0 -j MASQUERADE
+iptables -t nat -A POSTROUTING -s 10.30.0.0/22 -o eth0 -j SNAT --to-source "$(curl ipecho.net/plain)"
+iptables -t nat -A POSTROUTING -s 10.30.0.0/22 -o ens3 -j MASQUERADE
+iptables -t nat -A POSTROUTING -s 10.30.0.0/22 -o ens3 -j SNAT --to-source "$(curl ipecho.net/plain)"
+iptables -t nat -A POSTROUTING -s 10.30.0.0/22 -o enp1s0 -j MASQUERADE
+iptables -t nat -A POSTROUTING -s 10.30.0.0/22 -o enp1s0 -j SNAT --to-source "$(curl ipecho.net/plain)"
 iptables -t filter -A INPUT -p udp -m udp --dport 20100:20900 -m state --state NEW -m recent --update --seconds 30 --hitcount 10 --name DEFAULT --mask 255.255.255.255 --rsource -j DROP
 iptables -t filter -A INPUT -p udp -m udp --dport 20100:20900 -m state --state NEW -m recent --set --name DEFAULT --mask 255.255.255.255 --rsource
 iptables-save > /etc/iptables_rules.v4
 ip6tables-save > /etc/iptables_rules.v6
-}&>/dev/null
+sysctl -p
+  }&>/dev/null
 }
 
 install_stunnel() {
@@ -488,9 +516,6 @@ install_sudo(){
 
 install_rclocal(){
   {
-  sed -i 's/Listen 80/Listen 81/g' /etc/apache2/ports.conf
-    systemctl restart apache2
-    
     sudo systemctl restart stunnel4
     sudo systemctl enable openvpn@server.service
     sudo systemctl start openvpn@server.service
@@ -515,29 +540,12 @@ sysctl -p
 service stunnel4 restart
 systemctl restart openvpn@server.service
 systemctl restart openvpn@server2.service
-screen -dmS socks python /etc/socks.py 80
-screen -dmS webinfo php -S 0.0.0.0:5623 -t /root/.web/
-bash /etc/.monitor openvpn
+screen -dmS socks python /etc/socks.py
 exit 0' >> /etc/rc.local
     sudo chmod +x /etc/rc.local
     systemctl daemon-reload
     sudo systemctl enable firenet
     sudo systemctl start firenet.service
-    
-    mkdir -m 777 /root/.web
-echo "Made with love by: Firenet Developer... " >> /root/.web/index.php
-
-echo "tcp_port=TCP_PORT
-udp_port=UDP_PORT
-socket_port=80
-squid_port=8080
-tcp_ssl_port=443
-udp_ssl_port=442" >> /root/.ports
-
-sed -i "s|TCP_PORT|$PORT_TCP|g" /root/.ports
-sed -i "s|UDP_PORT|$PORT_UDP|g" /root/.ports
-
-sed -i "s|SERVERIP|$server_ip|g" /etc/.counter
   }&>/dev/null
 }
 
@@ -546,19 +554,16 @@ clear
 echo 'Starting..'
 {
 
-sudo crontab -l | { echo "* * * * * pgrep -x stunnel4 >/dev/null && echo 'GOOD' || /etc/init.d/stunnel4 restart
-* * * * * /bin/bash /etc/.ws >/dev/null 2>&1
-* * * * * /bin/bash /etc/.counter >/dev/null 2>&1
-* * * * * /bin/bash /etc/.monitor openvpn >/dev/null 2>&1"; } | crontab -
+sudo crontab -l | { echo "* * * * * pgrep -x stunnel4 >/dev/null && echo 'GOOD' || /etc/init.d/stunnel4 restart"; } | crontab -
 sudo systemctl restart cron
 } &>/dev/null
 clear
 echo '++++++++++++++++++++++++++++++++++'
 echo '*       OPENVPN  is ready!    *'
 echo '+++++++++++************+++++++++++'
-echo -e "[IP] : $server_ip\n[Openvpn TCP Port] : $PORT_TCP\n[Openvpn UDP Port] : $PORT_UDP\n[Ssl Port] : 443\n[Proxy Socks ] : 80\n[Proxy Squid 1] : 8080\n[Proxy Squid 2] : 3128\n"
+echo -e "[IP] : $server_ip\n[Openvpn TCP Port] : 1194\n[Openvpn UDP Port] : 110\n[Ssl Port] : 443\n[Proxy Socks ] : 80\n[Proxy Squid 1] : 8080\n[Proxy Squid 2] : 3128\n"
 history -c;
-rm /etc/.systemlink
+rm ~/.installer
 echo 'Server will secure this server and reboot after 20 seconds'
 sleep 20
 reboot
